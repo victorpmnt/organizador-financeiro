@@ -1,36 +1,295 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Organizador Financeiro Pessoal
 
-## Getting Started
+Aplicacao web para organizacao financeira pessoal, com foco em controle manual de entradas, saidas, investimentos, metas e acompanhamento mensal.
 
-First, run the development server:
+O projeto esta sendo construido para uso individual no primeiro momento, mas com base tecnica pensada para evoluir com seguranca para cenarios com multiplos usuarios.
+
+## Objetivo
+
+Criar um painel financeiro simples, claro e pratico para registrar e visualizar:
+
+- receitas e despesas
+- investimentos manuais
+- categorias financeiras
+- saldo mensal
+- total economizado
+- total investido
+- metas financeiras
+
+## Status Atual
+
+O projeto esta em fase inicial de configuracao.
+
+Hoje o repositorio ja possui:
+
+- base em `Next.js` com `TypeScript`
+- configuracao de `Tailwind CSS`
+- dependencias principais instaladas para formularios, validacao, graficos e Supabase
+
+Ainda nao estao implementados no codigo:
+
+- autenticacao completa
+- dashboard financeiro
+- CRUD de transacoes, categorias, contas e investimentos
+- integracao funcional com Supabase
+
+## Escopo do MVP
+
+As primeiras funcionalidades previstas para o MVP sao:
+
+- login obrigatorio
+- dashboard financeiro mensal
+- cadastro manual de transacoes
+- registro de entradas e saidas
+- registro manual de investimentos
+- cadastro de categorias
+- visualizacao de saldo mensal
+- visualizacao de total economizado
+- visualizacao de total investido
+- filtros por mes
+- graficos simples de gastos por categoria
+
+## Roadmap
+
+Evolucoes previstas apos o MVP:
+
+- metas financeiras
+- multiplas contas
+- controle de beneficios como VR e VT
+- transacoes recorrentes
+- relatorios mensais
+- exportacao de dados
+- versao mobile
+- importacao de extratos e CSV
+- analise de gastos com IA
+
+## Stack
+
+### Frontend
+
+- Next.js
+- TypeScript
+- App Router
+- Tailwind CSS
+
+### Banco de dados e autenticacao
+
+- Supabase Auth
+- Supabase Postgres
+- Supabase Row Level Security
+
+### Formularios e validacao
+
+- React Hook Form
+- Zod
+
+### Visualizacao de dados
+
+- Recharts
+- date-fns
+
+### Deploy
+
+- Vercel
+
+## Arquitetura planejada
+
+```txt
+Usuario
+  |
+  v
+Aplicacao Next.js na Vercel
+  |
+  v
+Supabase Auth
+  |
+  v
+Supabase Postgres com Row Level Security
+```
+
+## Estrategia tecnica
+
+O projeto sera uma aplicacao full-stack leve com `Next.js`, sem backend separado no inicio.
+
+Divisao planejada da aplicacao:
+
+- `Server Components` para leitura de dados
+- `Client Components` para formularios, graficos e interacoes
+- `Server Actions` para criacao, edicao e exclusao de registros
+- `Middleware` para proteger rotas privadas
+- `RLS` no Supabase para garantir isolamento por usuario
+
+## Estrutura planejada
+
+```txt
+src/
+|-- app/
+|   |-- (auth)/
+|   |   `-- login/
+|   |-- (dashboard)/
+|   |   |-- dashboard/
+|   |   |-- transacoes/
+|   |   |-- categorias/
+|   |   |-- contas/
+|   |   |-- rendas/
+|   |   |-- investimentos/
+|   |   `-- metas/
+|   |-- layout.tsx
+|   `-- page.tsx
+|-- components/
+|   |-- ui/
+|   |-- charts/
+|   |-- forms/
+|   |-- tables/
+|   `-- layout/
+|-- features/
+|   |-- auth/
+|   |-- transactions/
+|   |-- categories/
+|   |-- accounts/
+|   |-- income/
+|   |-- investments/
+|   `-- goals/
+|-- lib/
+|   |-- supabase/
+|   |   |-- client.ts
+|   |   |-- server.ts
+|   |   `-- middleware.ts
+|   |-- validations/
+|   |-- formatters.ts
+|   `-- utils.ts
+`-- types/
+```
+
+Observacao: essa estrutura ainda e a direcao planejada. O repositorio atual ainda esta na base inicial do projeto.
+
+## Modelo inicial de dados
+
+### `profiles`
+
+Dados basicos do usuario:
+
+```txt
+id
+email
+name
+created_at
+```
+
+### `accounts`
+
+Contas financeiras:
+
+```txt
+id
+user_id
+name
+type
+initial_balance
+created_at
+```
+
+### `categories`
+
+Categorias de entrada, saida ou investimento:
+
+```txt
+id
+user_id
+name
+type
+color
+created_at
+```
+
+### `transactions`
+
+Lancamentos financeiros:
+
+```txt
+id
+user_id
+account_id
+category_id
+type
+amount
+description
+transaction_date
+created_at
+```
+
+### `goals`
+
+Metas financeiras:
+
+```txt
+id
+user_id
+name
+target_amount
+current_amount
+deadline
+created_at
+```
+
+## Seguranca
+
+Mesmo sendo um projeto de uso pessoal, a base tecnica prevista considera:
+
+- login obrigatorio
+- Row Level Security em todas as tabelas
+- politicas baseadas em `auth.uid()`
+- uso de variaveis de ambiente para chaves do Supabase
+- nao exposicao de `service_role` no frontend
+- validacao com Zod
+- deploy com HTTPS
+
+## Como rodar localmente
+
+### Requisitos
+
+- Node.js 20 ou superior
+- npm
+
+### Instalacao
+
+```bash
+npm install
+```
+
+### Ambiente
+
+Crie as variaveis de ambiente do Supabase em um arquivo `.env` conforme a integracao for sendo implementada.
+
+Sugestao inicial:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+```
+
+### Desenvolvimento
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Depois, abra `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts disponiveis
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run dev
+npm run build
+npm run start
+npm run lint
+```
 
-## Learn More
+## Proxima meta
 
-To learn more about Next.js, take a look at the following resources:
+Estruturar a base real do produto com:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- autenticacao via Supabase
+- protecao de rotas
+- modelagem inicial das tabelas
+- primeiras telas do dashboard
