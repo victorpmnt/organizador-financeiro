@@ -1,0 +1,2 @@
+-- Optional seed file for local development.
+-- Keep reference data here if the project starts needing bootstrap records.

@@ -198,6 +198,54 @@ Mas o sistema deve sempre recalcular a leitura real a partir do que foi recebido
 
 Dados de meses anteriores podem apoiar previsoes, mas nao devem virar regra automatica de gasto permitido no mes atual.
 
+### `RN-009` - Planejamento nao movimenta saldo
+
+Itens planejados representam expectativas e orcamentos.
+
+Portanto:
+
+- entrada planejada nao e valor recebido
+- saida planejada nao e gasto confirmado
+- item planejado nao cria transacao automaticamente
+- gasto fixo planejado so entra em `comprometido` quando existir um compromisso correspondente
+
+### `RN-010` - Compra no credito e pagamento da fatura sao eventos distintos
+
+Uma compra no cartao:
+
+- registra a despesa para categorizacao e historico
+- nao reduz o saldo atual da conta no momento da compra
+- deve originar um compromisso futuro no bucket `livre`
+
+O pagamento da fatura:
+
+- gera uma saida confirmada no bucket `livre`
+- liquida o compromisso correspondente
+- nao deve registrar novamente a compra como uma nova despesa de consumo
+
+Para evitar dupla contagem do comprometido:
+
+- se as compras forem registradas individualmente, cada compromisso deve representar a parcela ou valor futuro correspondente
+- uma fatura agregada nao deve ser criada como compromisso adicional sobre os mesmos valores
+- um compromisso de fatura agregado so deve ser usado quando as compras nao estiverem detalhadas no sistema
+
+### `RN-011` - Disponivel e uma leitura derivada
+
+O valor `disponivel` nao deve ser persistido como saldo independente.
+
+Ele deve ser calculado a partir de:
+
+- saldos iniciais das contas do bucket
+- movimentacoes confirmadas que afetam saldo
+- compromissos ainda nao liquidados
+- reserva minima definida para o mes, quando aplicavel
+
+### `RN-012` - Integridade por usuario
+
+Uma transacao, compromisso ou item planejado so pode referenciar contas, categorias e registros pertencentes ao mesmo usuario.
+
+Essa regra deve existir tanto na aplicacao quanto em constraints e RLS no banco.
+
 ## Classificacoes Canonicas
 
 ### `IncomeSource`
@@ -234,6 +282,31 @@ Dados de meses anteriores podem apoiar previsoes, mas nao devem virar regra auto
 - Nao assumir que todo gasto reduz o saldo livre.
 - Nao usar historico mensal como unica heuristica para limite de gasto.
 - Quando houver duvida de modelagem, preservar a separacao entre `livre`, `vr` e `vt`.
+- Persistir expectativas mensais em `monthly_plans` e `monthly_plan_items`.
+- Persistir apenas movimentacoes confirmadas em `transactions`.
+- Persistir obrigacoes e reservas efetivas em `commitments`.
+- Nunca somar compra no credito e pagamento da fatura como duas despesas de consumo.
+
+## Persistencia das Leituras Financeiras
+
+Mapeamento canonico entre conceito e banco:
+
+| Conceito | Fonte principal |
+| --- | --- |
+| `planejado` | `monthly_plans` e `monthly_plan_items` |
+| `recebido` | transacoes de entrada confirmadas |
+| `saldo atual` | saldos iniciais mais transacoes que afetam saldo |
+| `comprometido` | compromissos ainda nao liquidados |
+| `disponivel` | calculo derivado por bucket |
+
+Regras adicionais:
+
+- `monthly_plans` deve ter no maximo um registro por usuario e mes.
+- O campo `month` usa sempre o primeiro dia do mes como referencia.
+- `minimum_free_reserve_in_cents` representa a reserva de seguranca usada no limite seguro do credito.
+- Valores planejados nunca devem ser incluidos em consultas de saldo confirmado.
+- Transacoes com `expense_nature = credit_card` sao despesas diferidas e nao afetam saldo imediatamente.
+- A liquidacao de um compromisso deve apontar para a transacao confirmada que realizou o pagamento.
 
 ## Arquitetura do MVP
 

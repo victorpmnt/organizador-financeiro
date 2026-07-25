@@ -1,4 +1,5 @@
 import type { CommitmentType } from "../enums/commitment-type";
+import type { BalanceBucket } from "../enums/balance-bucket";
 
 export interface Commitment {
   id: string;
@@ -7,6 +8,11 @@ export interface Commitment {
   amountInCents: number;
   dueOn: string;
   description: string | null;
+  bucket: BalanceBucket;
+  accountId: string | null;
+  categoryId: string | null;
+  sourceTransactionId: string | null;
+  settlementTransactionId: string | null;
   settledAt: string | null;
   createdAt: string;
 }

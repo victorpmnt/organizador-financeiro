@@ -12,6 +12,7 @@ export interface Transaction {
   occurredOn: string;
   description: string | null;
   bucket: BalanceBucket;
+  affectsBalance: boolean;
   incomeSource: IncomeSource | null;
   expenseNature: ExpenseNature | null;
   categoryId: string | null;
