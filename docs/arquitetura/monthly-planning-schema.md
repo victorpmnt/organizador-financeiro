@@ -4,8 +4,8 @@ Este documento registra a comparacao entre as regras de negocio do MVP e as migr
 
 Arquivos executaveis:
 
-- `supabase/migrations/20260725_002_finance_schema_adjustments.sql`
-- `supabase/migrations/20260725_003_monthly_planning.sql`
+- `supabase/migrations/20260725000002_finance_schema_adjustments.sql`
+- `supabase/migrations/20260725000003_monthly_planning.sql`
 
 ## Separacao dos conceitos
 
@@ -111,9 +111,9 @@ Resultados negativos devem ser apresentados como indisponibilidade ou alerta, na
 
 Como a migracao inicial ja foi executada no SQL Editor:
 
-1. executar todo o arquivo `20260725_002_finance_schema_adjustments.sql`
+1. executar todo o arquivo `20260725000002_finance_schema_adjustments.sql`
 2. confirmar que a execucao terminou sem erro
-3. executar todo o arquivo `20260725_003_monthly_planning.sql`
+3. executar todo o arquivo `20260725000003_monthly_planning.sql`
 4. confirmar no Table Editor a existencia de `monthly_plans` e `monthly_plan_items`
 
 Nao executar a `001` novamente no mesmo banco.

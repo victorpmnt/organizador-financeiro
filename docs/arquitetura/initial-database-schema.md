@@ -4,7 +4,7 @@ Este documento resume a primeira migracao do projeto.
 
 Arquivo fonte:
 
-- `supabase/migrations/20260712_001_initial_schema.sql`
+- `supabase/migrations/20260712000001_initial_schema.sql`
 
 ## O que a migracao cria
 
@@ -68,5 +68,5 @@ Como esta migracao ja foi aplicada no projeto remoto, ela deve ser tratada como 
 As correcoes de integridade e o planejamento mensal foram adicionados posteriormente. Consulte:
 
 - `docs/arquitetura/monthly-planning-schema.md`
-- `supabase/migrations/20260725_002_finance_schema_adjustments.sql`
-- `supabase/migrations/20260725_003_monthly_planning.sql`
+- `supabase/migrations/20260725000002_finance_schema_adjustments.sql`
+- `supabase/migrations/20260725000003_monthly_planning.sql`

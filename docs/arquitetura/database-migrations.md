@@ -28,9 +28,9 @@ Se houver divergencia entre um `.md` e uma migracao SQL, a migracao SQL prevalec
 ```txt
 supabase/
 |-- migrations/
-|   |-- 20260712_001_initial_schema.sql
-|   |-- 20260712_002_rls_policies.sql
-|   `-- 20260712_003_seed_reference_data.sql
+|   |-- 20260712000001_initial_schema.sql
+|   |-- 20260725000002_finance_schema_adjustments.sql
+|   `-- 20260725000003_monthly_planning.sql
 |-- seed.sql
 `-- config.toml
 ```
@@ -123,6 +123,10 @@ supabase db reset
 supabase migration list
 supabase db push
 ```
+
+Para detalhes operacionais do ambiente atual, consultar tambem:
+
+- `docs/arquitetura/supabase-cli.md`
 
 ## Regras do Projeto
 
