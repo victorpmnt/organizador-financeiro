@@ -1,3 +1,27 @@
+---
+doc_id: DOC-ARCH-002
+title: Initial Database Schema
+type: architecture
+status: draft
+version: 1.0.0
+owner: TBD
+created_at: 2026-08-05
+updated_at: 2026-08-05
+review_due:
+domain: arquitetura
+audited_by: TBD
+summary: Resumo da migracao inicial do banco, cobrindo tipos, tabelas, RLS e diretrizes de evolucao do schema.
+rag_ready: false
+tags:
+  - database
+  - schema
+  - supabase
+  - rls
+related_docs:
+  - "[[docs/arquitetura/database-migrations]]"
+  - "[[docs/arquitetura/monthly-planning-schema]]"
+---
+
 # Initial Database Schema
 
 Este documento resume a primeira migracao do projeto.

@@ -1,3 +1,27 @@
+---
+doc_id: DOC-ARCH-004
+title: Supabase CLI no Projeto
+type: guide
+status: draft
+version: 1.0.0
+owner: TBD
+created_at: 2026-08-05
+updated_at: 2026-08-05
+review_due:
+domain: arquitetura
+audited_by: TBD
+summary: Guia pratico de uso da Supabase CLI no ambiente atual do projeto, incluindo comandos, fluxo operacional e cuidados no Windows.
+rag_ready: false
+tags:
+  - supabase
+  - cli
+  - windows
+  - operations
+related_docs:
+  - "[[docs/arquitetura/database-migrations]]"
+  - "[[docs/arquitetura/initial-database-schema]]"
+---
+
 # Supabase CLI no Projeto
 
 Este documento registra como a `Supabase CLI` esta sendo usada neste projeto, com foco no ambiente atual em Windows e no fluxo remoto via `SQL Editor` + migracoes versionadas.

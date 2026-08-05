@@ -239,3 +239,76 @@ Vercel
 Projeto em fase inicial de planejamento e configuração.
 
 Primeira meta: criar a base do projeto com Next.js, configurar Tailwind, instalar dependências principais e preparar integração com Supabase.
+
+## Protocolo de Documentacao
+
+Toda implementacao nova relevante deve deixar a documentacao do projeto em dia.
+
+Regras obrigatorias para agentes:
+
+* Antes de implementar, verificar se ja existe documento relacionado em `docs/`
+* Se a implementacao alterar arquitetura, dominio, fluxo operacional, banco, integracao, seguranca ou convencao importante, atualizar o documento existente correspondente
+* Se nao existir documento adequado para a mudanca, criar um novo arquivo em `docs/` no dominio mais apropriado
+* Nao concluir uma implementacao relevante deixando a documentacao desatualizada
+* Para mudancas pequenas e locais, evitar criar documentacao desnecessaria; nesses casos, atualizar apenas quando a mudanca alterar comportamento, contrato ou decisao tecnica importante
+
+Todo documento Markdown em `docs/` deve usar front matter YAML compativel com Obsidian no topo do arquivo.
+
+Campos padrao obrigatorios:
+
+```yaml
+---
+doc_id: DOC-XXX-000
+title: Titulo do documento
+type: guide
+status: draft
+version: 1.0.0
+owner: TBD
+created_at: 2026-08-05
+updated_at: 2026-08-05
+review_due:
+domain: arquitetura
+audited_by: TBD
+summary: Resumo curto do objetivo do documento.
+rag_ready: false
+tags:
+  - exemplo
+related_docs:
+  - "[[docs/caminho/do-documento]]"
+---
+```
+
+Convencoes para documentacao:
+
+* Usar datas em formato ISO `YYYY-MM-DD`
+* Manter `rag_ready` como booleano real `true` ou `false`
+* Usar `related_docs` com wikilinks do Obsidian
+* Atualizar `updated_at` sempre que o documento for alterado
+* Atualizar `version` quando houver mudanca relevante de conteudo ou decisao
+* Escrever documentos de forma objetiva, com contexto, decisao e impacto pratico
+
+## Guardrails de Implementacao
+
+Agentes devem priorizar simplicidade, clareza e escopo minimo suficiente.
+
+Regras obrigatorias:
+
+* Resolver o problema com a menor mudanca coerente possivel
+* Evitar overengineering, abstrações prematuras e camadas extras sem ganho claro
+* Nao transformar tarefa simples em refactor grande ou algoritmo desnecessariamente complexo
+* Nao espalhar a mesma mudanca por dezenas ou centenas de arquivos sem necessidade real
+* Preferir diffs pequenos, localizados e reversiveis
+* Reutilizar padroes, utilitarios e estruturas ja existentes antes de criar novos
+* So extrair novas abstrações quando houver repeticao real, pressao de manutencao ou ganho claro de legibilidade
+* Manter casos de uso, validacoes e regras de negocio coesos e faceis de ler
+* Quando houver tradeoff entre sofisticacao e manutencao, preferir a abordagem mais simples que atenda corretamente ao dominio
+
+Boas praticas esperadas:
+
+* nomes claros e coerentes com o dominio
+* funcoes pequenas e com responsabilidade definida
+* validacao explicita de entradas
+* tratamento consistente de erros
+* tipagem forte e contratos claros
+* testes focados nos fluxos criticos quando a base de testes existir
+* seguranca por padrao, especialmente em autenticacao, autorizacao e dados financeiros

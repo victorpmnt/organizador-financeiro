@@ -562,3 +562,45 @@ Evitar termos vagos quando eles ocultarem a regra real:
 - evitar `saldo geral` como metrica principal
 - evitar `receita mensal` quando a distincao entre buckets for relevante
 - evitar `pode gastar` sem explicitar se isso significa `livre`, `vr` ou `vt`
+
+## Protocolo de Documentacao para Implementacoes
+
+Sempre que uma implementacao nova alterar o comportamento do sistema de forma relevante, o agente deve revisar `docs/` no mesmo fluxo de trabalho.
+
+Aplicar estas regras:
+
+- procurar primeiro por documentacao existente relacionada ao dominio alterado
+- atualizar a documentacao existente quando a mudanca expandir ou corrigir uma decisao ja documentada
+- criar novo documento quando a implementacao introduzir fluxo, modulo, integracao, regra ou processo ainda nao documentado
+- nao encerrar mudancas relevantes de dominio, arquitetura, banco, seguranca ou operacao sem documentacao correspondente
+- evitar criar documento novo para ajuste trivial que nao muda contrato, decisao ou comportamento relevante
+
+Padrao obrigatorio para novos arquivos em `docs/`:
+
+- usar front matter YAML compativel com Obsidian
+- manter os campos `doc_id`, `title`, `type`, `status`, `version`, `owner`, `created_at`, `updated_at`, `review_due`, `domain`, `audited_by`, `summary`, `rag_ready`, `tags` e `related_docs`
+- usar datas ISO `YYYY-MM-DD`
+- usar `related_docs` com wikilinks, por exemplo `[[docs/arquitetura/supabase-cli]]`
+- manter `rag_ready` como booleano real
+
+## Guardrails de Engenharia
+
+A implementacao deve ser pragmatica e proporcional ao problema.
+
+Diretrizes obrigatorias:
+
+- preferir a menor solucao correta antes de introduzir novas camadas
+- evitar superengenharia, generalizacao precoce e refactors amplos sem necessidade direta
+- nao distribuir uma mudanca simples por muitos arquivos quando ela pode ficar concentrada
+- nao criar algoritmos grandes para resolver fluxo simples de CRUD, validacao ou composicao
+- preservar separacao de responsabilidades sem tornar o codigo burocratico
+- reutilizar estruturas existentes antes de criar novos patterns, helpers ou wrappers
+- introduzir abstrações novas apenas quando o custo de duplicacao ou acoplamento ja estiver evidente
+- manter o codigo facil de entender por outro agente ou desenvolvedor sem investigacao excessiva
+
+Em caso de duvida entre uma solucao "mais sofisticada" e uma solucao "mais direta", escolher a mais direta se ela:
+
+- respeita as regras de dominio
+- nao compromete seguranca
+- nao piora manutenibilidade
+- nao bloqueia evolucao previsivel do MVP

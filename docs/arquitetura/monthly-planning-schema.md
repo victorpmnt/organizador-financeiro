@@ -1,3 +1,27 @@
+---
+doc_id: DOC-ARCH-003
+title: Planejamento Mensal e Ajustes do Schema Financeiro
+type: architecture
+status: draft
+version: 1.0.0
+owner: TBD
+created_at: 2026-08-05
+updated_at: 2026-08-05
+review_due:
+domain: arquitetura
+audited_by: TBD
+summary: Documenta os ajustes do schema financeiro e a modelagem de planejamento mensal introduzidos apos a migracao inicial.
+rag_ready: false
+tags:
+  - monthly-planning
+  - database
+  - schema
+  - finance
+related_docs:
+  - "[[docs/arquitetura/initial-database-schema]]"
+  - "[[docs/planos/backend-mvp-plan]]"
+---
+
 # Planejamento Mensal e Ajustes do Schema Financeiro
 
 Este documento registra a comparacao entre as regras de negocio do MVP e as migracoes que sucedem o schema inicial.

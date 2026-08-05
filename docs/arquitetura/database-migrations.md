@@ -1,3 +1,27 @@
+---
+doc_id: DOC-ARCH-001
+title: Database Migrations com Supabase
+type: architecture
+status: draft
+version: 1.0.0
+owner: TBD
+created_at: 2026-08-05
+updated_at: 2026-08-05
+review_due:
+domain: arquitetura
+audited_by: TBD
+summary: Guia operacional para versionamento, validacao e publicacao de migracoes de banco com Supabase CLI.
+rag_ready: false
+tags:
+  - supabase
+  - migrations
+  - database
+  - architecture
+related_docs:
+  - "[[docs/arquitetura/initial-database-schema]]"
+  - "[[docs/arquitetura/supabase-cli]]"
+---
+
 # Database Migrations com Supabase
 
 Este documento define como o projeto deve versionar, aplicar e revisar mudancas de banco de dados usando `Supabase CLI`.
