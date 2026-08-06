@@ -3,7 +3,7 @@ doc_id: DOC-RN-001
 title: Politica de Exposicao da Data API e Grants
 type: policy
 status: draft
-version: 1.2.0
+version: 1.3.0
 owner: TBD
 created_at: 2026-08-06
 updated_at: 2026-08-06
@@ -154,6 +154,23 @@ Motivos:
 - evita ambiguidade entre o que o produto permite e o que o banco aceita
 - alinha `RLS` com a decisao de nao conceder `DELETE` ao usuario autenticado
 
+### 3.3 `profiles.email` e espelho canonico do Auth
+
+O campo `public.profiles.email` nao deve ser tratado como valor livremente editavel pelo usuario.
+
+Regra:
+
+- `auth.users.email` e a fonte de verdade da identidade da conta
+- `public.profiles.email` existe apenas como espelho desse valor
+- qualquer sincronizacao deve partir do Auth para o perfil
+- o perfil pode expor esse email, mas nao redefinir a identidade canonica
+
+Motivos:
+
+- evita divergencia entre login real e perfil publico
+- preserva rastreabilidade e consistencia de auditoria
+- impede que o perfil aparente representar um email diferente do dono autenticado
+
 ### 4. Objetos novos em `public` devem nascer fechados
 
 Todo objeto novo criado no schema `public` deve permanecer inacessivel pela Data API ate que um `GRANT` explicito seja adicionado em migracao.
@@ -250,6 +267,7 @@ Para o estado atual do produto, a decisao oficial e:
 - `authenticated` recebe acesso apenas as tabelas do app
 - `authenticated` nao recebe `DELETE` nas tabelas de negocio do MVP
 - tabelas de negocio devem preferir policies RLS separadas por acao, e nao `for all`
+- `profiles.email` deve espelhar `auth.users.email` e nao pode divergir manualmente
 - objetos futuros em `public` nao devem nascer expostos
 - `RLS` continua obrigatorio em toda tabela exposta
 
