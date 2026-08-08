@@ -3,7 +3,7 @@ doc_id: DOC-PLAN-001
 title: Plano Tecnico de Implementacao do Backend do MVP
 type: plan
 status: draft
-version: 1.3.0
+version: 1.4.0
 owner: TBD
 created_at: 2026-08-05
 updated_at: 2026-08-07
@@ -21,6 +21,8 @@ related_docs:
   - "[[docs/arquitetura/monthly-planning-schema]]"
   - "[[docs/arquitetura/supabase-cli]]"
   - "[[docs/arquitetura/serverless-vercel-supabase-architecture]]"
+  - "[[docs/regras_de_negocio/credito-e-compromissos-fase-3]]"
+  - "[[docs/roadmap/vinculo-cartao-conta-pagamento-fatura]]"
 ---
 
 # Plano Tecnico de Implementacao do Backend do MVP
@@ -824,8 +826,19 @@ O proximo passo recomendado de implementacao e:
 
 ## Lacunas a decidir
 
-Estas decisoes devem ser confirmadas antes de fechar a fase de credito:
+Decisoes de negocio confirmadas para a fase de credito:
 
-- pagamento parcial de compromisso entra no MVP ou nao
-- parcelamento sera modelado como multiplos `commitments` desde a origem ou apenas compromisso unico
-- `fixed_bill` entra no MVP inicial como compromisso explicito ou fica para fase posterior
+- toda compra no credito gera um compromisso logico
+- compras parceladas distribuem esse compromisso entre parcelas mensais
+- cartao de credito possui limite e dia de vencimento de fatura
+- pagamento sempre total no MVP
+- usuario escolhe a conta pagadora
+- compromisso de credito e referenciado em `free`; a saida do pagamento afeta o bucket da conta escolhida
+- categoria continua obrigatoria
+- compromissos em aberto sao listados por vencimento crescente
+- `investment` permanece fora do MVP e no roadmap
+
+Pontos tecnicos ainda necessarios antes da implementacao:
+
+- definir o modelo fisico das parcelas (linhas filhas ou compromissos por parcela)
+- confirmar se `fixed_bill` entra nesta fase ou fica para depois
