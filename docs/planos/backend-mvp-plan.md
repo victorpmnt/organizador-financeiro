@@ -3,10 +3,10 @@ doc_id: DOC-PLAN-001
 title: Plano Tecnico de Implementacao do Backend do MVP
 type: plan
 status: draft
-version: 1.5.0
+version: 1.6.0
 owner: TBD
 created_at: 2026-08-05
-updated_at: 2026-08-07
+updated_at: 2026-08-08
 review_due:
 domain: backend
 audited_by: TBD
@@ -762,6 +762,16 @@ Criterios de pronto:
 - pagamento reduz caixa e liquida compromisso
 - cada fluxo composto conclui integralmente ou nao persiste nenhuma alteracao
 
+Status de implementacao em 2026-08-08:
+
+- casos de uso `create-credit-card-purchase`, `list-open-commitments`, `pay-commitment`, `get-committed-balances`, `get-available-balances` e `calculate-safe-credit-limit` implementados
+- `accounts` atualizada para os tipos `debit`, `credit`, `vr` e `vt`, com limite e vencimento obrigatorios para contas de credito
+- repositorio Supabase real de `commitments` implementado com leitura de abertos e duas RPCs transacionais
+- migration manual adicionada em `supabase/migrations/20260808000100_phase_three_credit_commitments.sql`
+- compra no credito persiste uma `transaction` de consumo diferido e uma linha de `commitment` por parcela
+- pagamento de compromisso cria uma `transaction` confirmada de saida e liquida os `commitments` selecionados
+- cobertura automatizada ampliada com testes da Fase 3
+
 ### Fase 4 - planejamento mensal e consolidacao
 
 Entregaveis:
@@ -838,9 +848,9 @@ Decisoes de negocio confirmadas para a fase de credito:
 - compromissos em aberto sao listados por vencimento crescente
 - `investment` permanece fora do MVP e no roadmap
 
-Ponto tecnico ainda necessario antes da implementacao:
+Ponto funcional mantido para depois:
 
-- confirmar se `fixed_bill` entra nesta fase ou fica para depois
+- `fixed_bill` continua fora da implementacao desta fase e permanece para definicao futura
 
 Decisao tecnica aprovada para parcelas:
 

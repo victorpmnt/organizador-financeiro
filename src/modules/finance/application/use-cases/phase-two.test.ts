@@ -121,24 +121,28 @@ function seedBalances(
 ) {
   accountRepository.records.push(
     {
-      accountType: "checking",
+      accountType: "debit",
       bucket: "free",
+      creditLimitInCents: null,
       createdAt: now,
       id: "free-account",
       initialBalanceInCents: 1_000_00,
       isActive: true,
       name: "Main",
+      statementDueDay: null,
       updatedAt: now,
       userId: "authenticated-user",
     },
     {
-      accountType: "benefit",
+      accountType: "vr",
       bucket: "meal_benefit",
+      creditLimitInCents: null,
       createdAt: now,
       id: "meal-account",
       initialBalanceInCents: 300_00,
       isActive: true,
       name: "Meal",
+      statementDueDay: null,
       updatedAt: now,
       userId: "authenticated-user",
     },
@@ -199,13 +203,15 @@ describe("phase two create-income-entry", () => {
     const transactionRepository = new InMemoryTransactionRepository();
 
     accountRepository.records.push({
-      accountType: "benefit",
+      accountType: "vr",
       bucket: "meal_benefit",
+      creditLimitInCents: null,
       createdAt: now,
       id: "meal-account",
       initialBalanceInCents: 0,
       isActive: true,
       name: "Meal",
+      statementDueDay: null,
       updatedAt: now,
       userId: "authenticated-user",
     });
@@ -234,13 +240,15 @@ describe("phase two create-income-entry", () => {
     const accountRepository = new InMemoryAccountRepository();
 
     accountRepository.records.push({
-      accountType: "checking",
+      accountType: "debit",
       bucket: "free",
+      creditLimitInCents: null,
       createdAt: now,
       id: "free-account",
       initialBalanceInCents: 0,
       isActive: true,
       name: "Main",
+      statementDueDay: null,
       updatedAt: now,
       userId: "authenticated-user",
     });
@@ -268,13 +276,15 @@ describe("phase two create-immediate-expense", () => {
     const transactionRepository = new InMemoryTransactionRepository();
 
     accountRepository.records.push({
-      accountType: "benefit",
+      accountType: "vr",
       bucket: "meal_benefit",
+      creditLimitInCents: null,
       createdAt: now,
       id: "meal-account",
       initialBalanceInCents: 0,
       isActive: true,
       name: "Meal",
+      statementDueDay: null,
       updatedAt: now,
       userId: "authenticated-user",
     });
@@ -318,13 +328,15 @@ describe("phase two create-immediate-expense", () => {
     const categoryRepository = new InMemoryCategoryRepository();
 
     accountRepository.records.push({
-      accountType: "checking",
+      accountType: "debit",
       bucket: "free",
+      creditLimitInCents: null,
       createdAt: now,
       id: "free-account",
       initialBalanceInCents: 0,
       isActive: true,
       name: "Main",
+      statementDueDay: null,
       updatedAt: now,
       userId: "authenticated-user",
     });

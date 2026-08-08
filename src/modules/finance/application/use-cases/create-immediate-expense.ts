@@ -37,7 +37,7 @@ export class CreateImmediateExpense {
       throw new FinanceDomainError("The selected category was not found.");
     }
 
-    if (account.accountType === "credit_card") {
+    if (account.accountType === "credit") {
       throw new FinanceDomainError("Credit-card accounts cannot be used for immediate expenses.");
     }
 

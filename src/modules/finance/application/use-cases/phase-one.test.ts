@@ -81,10 +81,12 @@ describe("phase one account use cases", () => {
     const useCase = new CreateAccount(repository, createAuthGuard());
 
     const account = await useCase.execute({
-      accountType: "checking",
+      accountType: "debit",
       bucket: "free",
+      creditLimitInCents: null,
       initialBalanceInCents: 150_00,
       name: "  Main account  ",
+      statementDueDay: null,
     });
 
     expect(account).toMatchObject({ name: "Main account", userId: "authenticated-user" });
@@ -95,10 +97,12 @@ describe("phase one account use cases", () => {
 
     await expect(
       useCase.execute({
-        accountType: "checking",
+        accountType: "debit",
         bucket: "meal_benefit",
+        creditLimitInCents: null,
         initialBalanceInCents: 0,
         name: "Invalid",
+        statementDueDay: null,
       }),
     ).rejects.toBeInstanceOf(FinanceDomainError);
   });
@@ -107,24 +111,28 @@ describe("phase one account use cases", () => {
     const repository = new InMemoryAccountRepository();
     repository.records.push(
       {
-        accountType: "cash",
+        accountType: "debit",
         bucket: "free",
+        creditLimitInCents: null,
         createdAt: now,
         id: "mine",
         initialBalanceInCents: 0,
         isActive: true,
         name: "Mine",
+        statementDueDay: null,
         updatedAt: now,
         userId: "authenticated-user",
       },
       {
-        accountType: "cash",
+        accountType: "debit",
         bucket: "free",
+        creditLimitInCents: null,
         createdAt: now,
         id: "other",
         initialBalanceInCents: 0,
         isActive: true,
         name: "Other",
+        statementDueDay: null,
         updatedAt: now,
         userId: "another-user",
       },

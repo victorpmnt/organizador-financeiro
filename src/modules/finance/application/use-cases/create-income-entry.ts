@@ -29,7 +29,7 @@ export class CreateIncomeEntry {
       throw new FinanceDomainError("The selected account was not found.");
     }
 
-    if (account.accountType === "credit_card") {
+    if (account.accountType === "credit") {
       throw new FinanceDomainError("Credit-card accounts cannot receive immediate income entries.");
     }
 

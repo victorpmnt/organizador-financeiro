@@ -11,6 +11,9 @@ export interface Commitment {
   bucket: BalanceBucket;
   accountId: string | null;
   categoryId: string | null;
+  logicalGroupId: string | null;
+  installmentCount: number | null;
+  installmentNumber: number | null;
   sourceTransactionId: string | null;
   settlementTransactionId: string | null;
   settledAt: string | null;

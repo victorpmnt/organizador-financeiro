@@ -5,8 +5,10 @@ import type { BalanceBucket } from "../../domain/enums/balance-bucket";
 export interface CreateAccountRecord {
   accountType: AccountType;
   bucket: BalanceBucket;
+  creditLimitInCents: number | null;
   initialBalanceInCents: number;
   name: string;
+  statementDueDay: number | null;
   userId: string;
 }
 

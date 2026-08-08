@@ -9,8 +9,10 @@ import type { AccountRepository } from "../ports/account-repository";
 export interface CreateAccountInput {
   accountType: AccountType;
   bucket: BalanceBucket;
+  creditLimitInCents: number | null;
   initialBalanceInCents: number;
   name: string;
+  statementDueDay: number | null;
 }
 
 export class CreateAccount {
@@ -31,4 +33,3 @@ export class CreateAccount {
     });
   }
 }
-

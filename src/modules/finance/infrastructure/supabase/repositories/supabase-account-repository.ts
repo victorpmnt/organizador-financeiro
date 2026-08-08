@@ -19,8 +19,10 @@ export class SupabaseAccountRepository implements AccountRepository {
       .insert({
         account_type: input.accountType,
         balance_bucket: input.bucket,
+        credit_limit_in_cents: input.creditLimitInCents,
         initial_balance_in_cents: input.initialBalanceInCents,
         name: input.name,
+        statement_due_day: input.statementDueDay,
         user_id: input.userId,
       })
       .select()
