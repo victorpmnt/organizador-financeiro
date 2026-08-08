@@ -11,7 +11,7 @@ review_due:
 domain: arquitetura
 audited_by: TBD
 summary: Guia pratico de uso da Supabase CLI no ambiente atual do projeto, incluindo comandos, fluxo operacional e cuidados no Windows.
-rag_ready: false
+rag_ready: true
 tags:
   - supabase
   - cli

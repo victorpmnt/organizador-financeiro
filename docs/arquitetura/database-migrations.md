@@ -11,7 +11,7 @@ review_due:
 domain: arquitetura
 audited_by: TBD
 summary: Guia operacional para versionamento, validacao e publicacao de migracoes de banco com Supabase CLI.
-rag_ready: false
+rag_ready: true
 tags:
   - supabase
   - migrations

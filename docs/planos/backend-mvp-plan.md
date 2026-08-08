@@ -3,10 +3,10 @@ doc_id: DOC-PLAN-001
 title: Plano Tecnico de Implementacao do Backend do MVP
 type: plan
 status: draft
-version: 1.0.0
+version: 1.3.0
 owner: TBD
 created_at: 2026-08-05
-updated_at: 2026-08-05
+updated_at: 2026-08-07
 review_due:
 domain: backend
 audited_by: TBD
@@ -20,6 +20,7 @@ tags:
 related_docs:
   - "[[docs/arquitetura/monthly-planning-schema]]"
   - "[[docs/arquitetura/supabase-cli]]"
+  - "[[docs/arquitetura/serverless-vercel-supabase-architecture]]"
 ---
 
 # Plano Tecnico de Implementacao do Backend do MVP
@@ -55,6 +56,25 @@ Ele precisa ser capaz de:
 - manter isolamento total por usuario com apoio de RLS e validacoes na aplicacao
 
 Se isso funcionar de ponta a ponta, o backend do MVP ja atende a regra central do produto.
+
+### Contrato de execucao em producao
+
+O backend do MVP deve funcionar exclusivamente com `Next.js` na Vercel e Supabase, conforme `docs/arquitetura/serverless-vercel-supabase-architecture.md`.
+
+Regras obrigatorias:
+
+- nao criar backend separado, servidor dedicado, VPS, container permanente ou microservico
+- executar Server Components, Server Actions, Proxy e Route Handlers no runtime gerenciado pela Vercel
+- acessar dados com `supabase-js` pela Data API HTTPS
+- nao abrir conexao Postgres direta pela aplicacao
+- nao adicionar ORM ou driver que dependa de conexao Postgres direta
+- nao manter pool de conexoes na aplicacao
+- criar o Supabase server client dentro do contexto de cada requisicao
+- nao armazenar sessao, client autenticado ou estado de usuario em variavel global
+- usar a publishable key e o JWT do usuario nos fluxos normais
+- manter `SUPABASE_SECRET_KEY` fora dos fluxos normais do MVP
+- implementar operacoes compostas que exigem atomicidade como funcoes RPC transacionais no Supabase
+- nao introduzir Supabase Edge Functions sem necessidade especifica aprovada
 
 ## 3. Modulos e responsabilidades
 
@@ -416,12 +436,18 @@ Observacoes:
 - `server actions` devem chamar casos de uso
 - repositorios concretos do Supabase ficam em `infrastructure`
 - schemas de entrada para formularios e actions ficam em `interface`
+- o server client do Supabase deve ser criado por requisicao, usando os cookies da requisicao atual
+- o browser client pode usar o comportamento singleton de `createBrowserClient`
+- repositories acessam o Supabase pela Data API HTTPS, nunca por conexao Postgres direta
 
 ## 6. Fluxo de autenticacao e seguranca
 
 ### Autenticacao
 
 - usar Supabase SSR para recuperar sessao no servidor
+- usar `Proxy` do Next.js para renovar tokens e propagar cookies atualizados
+- validar identidade no servidor com uma chamada que verifique as claims do JWT
+- nao usar `getSession()` como verificacao autoritativa em codigo de servidor
 - toda leitura ou escrita sensivel deve obter o usuario autenticado no servidor
 - nunca confiar em `userId` vindo do cliente
 
@@ -457,9 +483,11 @@ Separacao recomendada:
 
 ### Uso correto de chaves Supabase
 
-- `anon key` para contexto publico/browser
-- client SSR autenticado para operacoes do usuario
-- `service_role` fora do frontend e fora dos fluxos normais do MVP
+- publishable key no browser e no client SSR autenticado
+- client SSR com cookies e JWT para operacoes do usuario
+- `SUPABASE_SECRET_KEY` apenas para eventual caso administrativo explicito e isolado
+- secret key fora do frontend, dos repositories normais e dos fluxos do usuario
+- a existencia da secret key no ambiente nao autoriza seu uso automatico
 
 ## 7. Fluxos criticos do dominio
 
@@ -637,7 +665,9 @@ Regras:
 
 Entregaveis:
 
-- client Supabase para servidor e browser
+- client Supabase de servidor criado por requisicao
+- browser client para autenticacao e interacoes estritamente necessarias no cliente
+- Proxy para renovacao segura da sessao e propagacao de cookies
 - obtencao de usuario autenticado no servidor
 - repositorios reais de `accounts` e `categories`
 - casos de uso `create-account`, `list-accounts`, `create-category`, `list-categories`
@@ -646,6 +676,7 @@ Dependencias:
 
 - variaveis de ambiente
 - integracao Supabase SSR
+- Data API acessivel para o role `authenticated`
 
 Riscos:
 
@@ -655,6 +686,20 @@ Riscos:
 Criterios de pronto:
 
 - usuario autenticado consegue criar e listar contas e categorias proprias
+- repositories usam publishable key, cookies da sessao e Data API HTTPS
+- nenhum fluxo da fase usa `SUPABASE_SECRET_KEY` ou conexao Postgres direta
+
+Status de implementacao em 2026-08-06:
+
+- server client e browser client implementados com publishable key
+- server client criado por requisicao e integrado aos cookies do Next.js
+- `proxy.ts` implementado para renovar a sessao com `getClaims()` e propagar cookies e headers privados
+- identidade autenticada obtida no servidor sem aceitar `userId` vindo das actions
+- repositories Supabase reais de `accounts` e `categories` implementados pela Data API HTTPS
+- casos de uso `create-account`, `list-accounts`, `create-category` e `list-categories` implementados
+- schemas Zod e Server Actions finas implementados na camada de entrega
+- testes unitarios cobrem autenticacao obrigatoria, ownership e regras de conta e categoria
+- validacao ponta a ponta com usuario real depende do fluxo de login da aplicacao
 
 ### Fase 2 - fluxo basico de caixa confirmado
 
@@ -678,6 +723,16 @@ Criterios de pronto:
 
 - entradas e saidas imediatas refletem corretamente no saldo por bucket
 
+Status de implementacao em 2026-08-07:
+
+- caso de uso `create-income-entry` implementado com validacao de bucket pela conta escolhida
+- caso de uso `create-immediate-expense` implementado com categoria obrigatoria e bloqueio de fluxo de credito
+- caso de uso `list-transactions-by-month` implementado com leitura por intervalo derivado de `YYYY-MM`
+- caso de uso `get-bucket-balances` implementado a partir de saldo inicial das contas e transacoes que afetam saldo
+- repositorio Supabase real de `transactions` implementado via Data API HTTPS
+- Server Actions e schemas Zod da Fase 2 implementados na camada de entrega
+- testes unitarios cobrem regras principais de bucket, categoria e leitura de saldo
+
 ### Fase 3 - compromissos e credito
 
 Entregaveis:
@@ -688,6 +743,7 @@ Entregaveis:
 - `get-committed-balances`
 - `get-available-balances`
 - `calculate-safe-credit-limit`
+- funcoes RPC transacionais para compra com compromisso e pagamento com liquidacao
 
 Dependencias:
 
@@ -702,6 +758,7 @@ Criterios de pronto:
 
 - compra no credito aumenta consumo e comprometido, mas nao reduz caixa
 - pagamento reduz caixa e liquida compromisso
+- cada fluxo composto conclui integralmente ou nao persiste nenhuma alteracao
 
 ### Fase 4 - planejamento mensal e consolidacao
 
@@ -729,11 +786,16 @@ Criterios de pronto:
 
 - usar `Server Action` como default para fluxos internos do app
 - usar `Route Handler` apenas quando houver necessidade real de endpoint HTTP
+- executar o backend apenas no runtime gerenciado do Next.js na Vercel
+- usar `supabase-js` e Supabase Data API por HTTPS como mecanismo de acesso a dados
+- nao criar conexao Postgres direta, pool da aplicacao, servidor dedicado ou worker persistente
+- criar o Supabase server client por requisicao e nunca compartilhar contexto autenticado entre requisicoes
 - validar shape na interface e regras na `application` ou `domain`
 - modelar repositorios por agregado ou por tipo de persistencia, nao um mega repositorio generico
 - criar mapeadores para evitar contaminar dominio com formatos do Supabase
 - manter calculos centrais fora de React, `page.tsx` e action handlers extensos
-- para operacoes que criam transacao e compromisso juntos, tratar atomicidade como requisito desde o inicio
+- para operacoes que criam transacao e compromisso juntos, usar RPC transacional no Supabase
+- preferir `SECURITY INVOKER` nas RPCs e revisar grants, RLS e autorizacao antes de expo-las
 - evitar separar em submodulos excessivos antes do volume real justificar
 
 ## 10. Riscos e pontos de atencao
@@ -745,12 +807,15 @@ Criterios de pronto:
 - abstrações prematuras que compliquem o MVP antes da entrega do fluxo real
 - consultas de dashboard misturando `planejado` e `confirmado`
 - falta de atomicidade em fluxos compostos
+- vazamento de sessao por reutilizacao de client autenticado entre invocacoes da Vercel
+- introducao acidental de conexao Postgres direta ou infraestrutura persistente fora do contrato do MVP
+- uso da secret key como atalho para contornar grants ou RLS
 
 ## 11. Proximo passo concreto
 
 O proximo passo recomendado de implementacao e:
 
-1. criar a infraestrutura base de autenticacao server-side com Supabase
+1. criar o server client Supabase por requisicao e o Proxy de renovacao de sessao
 2. implementar `AccountRepository` e `CategoryRepository`
 3. implementar `create-account` e `create-category`
 4. implementar `create-income-entry` e `create-immediate-expense`

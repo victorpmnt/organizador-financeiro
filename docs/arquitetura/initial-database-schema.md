@@ -11,7 +11,7 @@ review_due:
 domain: arquitetura
 audited_by: TBD
 summary: Resumo da migracao inicial do banco, cobrindo tipos, tabelas, RLS e diretrizes de evolucao do schema.
-rag_ready: false
+rag_ready: true
 tags:
   - database
   - schema

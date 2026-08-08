@@ -25,13 +25,17 @@ Hoje o repositorio ja possui:
 - base em `Next.js` com `TypeScript`
 - configuracao de `Tailwind CSS`
 - dependencias principais instaladas para formularios, validacao, graficos e Supabase
+- infraestrutura server-side do Supabase Auth com cookies e Proxy
+- repositories e casos de uso da Fase 1 para contas e categorias
+- fluxo confirmado de caixa da Fase 2 para entradas, saidas imediatas, listagem mensal e saldo por bucket
+- validacao Zod e testes unitarios dos fluxos das Fases 1 e 2
 
 Ainda nao estao implementados no codigo:
 
 - autenticacao completa
 - dashboard financeiro
-- CRUD de transacoes, categorias, contas e investimentos
-- integracao funcional com Supabase
+- fluxos de credito e compromissos da Fase 3
+- fluxo visual de login e telas que consumam os casos de uso implementados
 
 ## Escopo do MVP
 
@@ -116,7 +120,7 @@ Divisao planejada da aplicacao:
 - `Server Components` para leitura de dados
 - `Client Components` para formularios, graficos e interacoes
 - `Server Actions` para criacao, edicao e exclusao de registros
-- `Middleware` para proteger rotas privadas
+- `Proxy` para renovar a sessao e proteger rotas privadas
 - `RLS` no Supabase para garantir isolamento por usuario
 
 ## Estrutura planejada
@@ -265,7 +269,9 @@ Sugestao inicial:
 
 ```env
 NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
+# Opcional e proibida nos fluxos normais do MVP:
+SUPABASE_SECRET_KEY=
 ```
 
 ### Desenvolvimento
@@ -283,6 +289,7 @@ npm run dev
 npm run build
 npm run start
 npm run lint
+npm test
 ```
 
 ## Proxima meta

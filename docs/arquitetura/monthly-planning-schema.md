@@ -11,7 +11,7 @@ review_due:
 domain: arquitetura
 audited_by: TBD
 summary: Documenta os ajustes do schema financeiro e a modelagem de planejamento mensal introduzidos apos a migracao inicial.
-rag_ready: false
+rag_ready: true
 tags:
   - monthly-planning
   - database

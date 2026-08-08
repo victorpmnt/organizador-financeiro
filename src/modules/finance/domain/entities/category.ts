@@ -1,8 +1,13 @@
+import type { CategoryKind } from "../enums/category-kind";
+import type { ExpenseNature } from "../enums/expense-nature";
+
 export interface Category {
-  id: string;
-  userId: string;
-  name: string;
   color: string | null;
-  kind: "income" | "expense" | "investment";
   createdAt: string;
+  expenseNature: ExpenseNature | null;
+  id: string;
+  kind: CategoryKind;
+  name: string;
+  updatedAt: string;
+  userId: string;
 }
