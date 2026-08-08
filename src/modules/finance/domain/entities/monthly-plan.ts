@@ -10,6 +10,7 @@ export interface MonthlyPlan {
   minimumFreeReserveInCents: number;
   notes: string | null;
   createdAt: string;
+  updatedAt: string;
 }
 
 export interface MonthlyPlanItem {
@@ -25,4 +26,10 @@ export interface MonthlyPlanItem {
   description: string | null;
   expectedOn: string | null;
   createdAt: string;
+  updatedAt: string;
+}
+
+export interface MonthlyPlanDetails {
+  items: MonthlyPlanItem[];
+  plan: MonthlyPlan | null;
 }

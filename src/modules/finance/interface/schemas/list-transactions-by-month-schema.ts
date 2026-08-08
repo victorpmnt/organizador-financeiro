@@ -1,7 +1,9 @@
 import { z } from "zod";
 
+import { yearMonthSchema } from "./year-month-schema";
+
 export const listTransactionsByMonthSchema = z.object({
-  yearMonth: z.string().regex(/^\d{4}-\d{2}$/, "yearMonth must use the YYYY-MM format."),
+  yearMonth: yearMonthSchema,
 });
 
 export type ListTransactionsByMonthSchemaInput = z.infer<typeof listTransactionsByMonthSchema>;

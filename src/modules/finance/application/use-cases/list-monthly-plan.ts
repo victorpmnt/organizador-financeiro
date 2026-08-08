@@ -1,23 +1,23 @@
 import type { RequireAuthenticatedUser } from "@/modules/auth";
 
-import type { MonthlyDashboardDto } from "../dtos/monthly-dashboard-dto";
+import type { MonthlyPlanDetailsDto } from "../dtos/monthly-plan-details-dto";
 import type { FinanceRepository } from "../ports/finance-repository";
 import { resolveMonthRange } from "../../domain/services/month";
 
-export interface GetMonthlyDashboardInput {
+export interface ListMonthlyPlanInput {
   yearMonth: string;
 }
 
-export class GetMonthlyDashboard {
+export class ListMonthlyPlan {
   constructor(
     private readonly financeRepository: FinanceRepository,
     private readonly requireAuthenticatedUser: RequireAuthenticatedUser,
   ) {}
 
-  async execute(input: GetMonthlyDashboardInput): Promise<MonthlyDashboardDto> {
+  async execute(input: ListMonthlyPlanInput): Promise<MonthlyPlanDetailsDto> {
     const user = await this.requireAuthenticatedUser.execute();
     const yearMonth = resolveMonthRange(input.yearMonth).monthDate.slice(0, 7);
 
-    return this.financeRepository.getMonthlyDashboard(user.id, yearMonth);
+    return this.financeRepository.listMonthlyPlan(user.id, yearMonth);
   }
 }

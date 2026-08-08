@@ -3,7 +3,7 @@ doc_id: DOC-PLAN-001
 title: Plano Tecnico de Implementacao do Backend do MVP
 type: plan
 status: draft
-version: 1.6.0
+version: 1.8.0
 owner: TBD
 created_at: 2026-08-05
 updated_at: 2026-08-08
@@ -22,6 +22,7 @@ related_docs:
   - "[[docs/arquitetura/supabase-cli]]"
   - "[[docs/arquitetura/serverless-vercel-supabase-architecture]]"
   - "[[docs/regras_de_negocio/credito-e-compromissos-fase-3]]"
+  - "[[docs/regras_de_negocio/planejamento-e-dashboard-fase-4]]"
   - "[[docs/roadmap/vinculo-cartao-conta-pagamento-fatura]]"
 ---
 
@@ -793,6 +794,32 @@ Riscos:
 Criterios de pronto:
 
 - backend entrega leitura separada de planejado, recebido, comprometido e disponivel
+
+Decisoes de negocio confirmadas em 2026-08-08:
+
+- o planejamento usa regime de caixa: o valor pertence ao mes esperado de recebimento ou gasto
+- salario planejado e recebido sao comparados por mes, origem da renda e bucket; a diferenca e apresentada como variacao
+- o planejamento deve preferir o valor liquido esperado na conta; folha, descontos e faltas detalhados ficam para o roadmap
+- despesas planejadas exigem categoria; entradas planejadas nao exigem categoria
+- despesas realizadas sao agrupadas por categoria e bucket; entradas realizadas por origem e bucket
+- a compra no credito entra como consumo no mes da compra e o pagamento da fatura fica fora do consumo
+- parcelas permanecem como compromissos nos meses de vencimento
+- o envio do plano representa sua versao completa, com remocao dos itens excluidos pelo usuario
+- a persistencia do plano sera feita por RPC transacional do Supabase, respeitando autenticacao e RLS
+- o dashboard exibira planejado, recebido, consumido, saldo atual, comprometido, disponivel e limite seguro
+- insights do MVP incluem variacao da renda, aderencia do plano, maior categoria, maior gasto, distribuicao por bucket, proximos compromissos, fluxo de caixa e utilizacao de cartao
+- o dashboard exibira tipo de conta utilizado (`credit`, `debit`, `vr` e `vt`), e nao uma forma operacional detalhada de pagamento
+- PIX, dinheiro, transferencia e cartao de debito detalhados permanecem no roadmap
+
+Status de implementacao em 2026-08-08:
+
+- casos de uso `upsert-monthly-plan`, `list-monthly-plan`, `compare-planned-vs-actual` e `get-monthly-dashboard` implementados
+- validacao de planejamento mensal adicionada na `application` e `domain`, incluindo mes valido, categoria obrigatoria para despesa e compatibilidade bucket-origem
+- `FinanceRepository` expandido para leitura e escrita real do planejamento mensal e consolidacao do dashboard
+- repositorio Supabase real implementado para carregar plano, comparar planejado versus realizado e montar dashboard com insights
+- migration adicionada em `supabase/migrations/20260808000200_phase_four_monthly_planning.sql` com RPC transacional `upsert_monthly_plan`, policy de delete e constraint de categoria obrigatoria
+- `database.types.ts` atualizado para `monthly_plans`, `monthly_plan_items` e a RPC da Fase 4
+- cobertura automatizada ampliada com testes da Fase 4
 
 ## 9. Decisoes tecnicas recomendadas
 

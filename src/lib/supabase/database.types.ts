@@ -149,6 +149,84 @@ export type Database = {
         };
         Relationships: [];
       };
+      monthly_plan_items: {
+        Row: {
+          amount_in_cents: number;
+          balance_bucket: Database["public"]["Enums"]["balance_bucket"];
+          category_id: string | null;
+          created_at: string;
+          description: string | null;
+          expected_on: string | null;
+          expense_nature: Database["public"]["Enums"]["expense_nature"] | null;
+          id: string;
+          income_source: Database["public"]["Enums"]["income_source"] | null;
+          kind: Database["public"]["Enums"]["monthly_plan_item_kind"];
+          monthly_plan_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          amount_in_cents: number;
+          balance_bucket: Database["public"]["Enums"]["balance_bucket"];
+          category_id?: string | null;
+          created_at?: string;
+          description?: string | null;
+          expected_on?: string | null;
+          expense_nature?: Database["public"]["Enums"]["expense_nature"] | null;
+          id?: string;
+          income_source?: Database["public"]["Enums"]["income_source"] | null;
+          kind: Database["public"]["Enums"]["monthly_plan_item_kind"];
+          monthly_plan_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          amount_in_cents?: number;
+          balance_bucket?: Database["public"]["Enums"]["balance_bucket"];
+          category_id?: string | null;
+          created_at?: string;
+          description?: string | null;
+          expected_on?: string | null;
+          expense_nature?: Database["public"]["Enums"]["expense_nature"] | null;
+          id?: string;
+          income_source?: Database["public"]["Enums"]["income_source"] | null;
+          kind?: Database["public"]["Enums"]["monthly_plan_item_kind"];
+          monthly_plan_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      monthly_plans: {
+        Row: {
+          created_at: string;
+          id: string;
+          minimum_free_reserve_in_cents: number;
+          month: string;
+          notes: string | null;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          minimum_free_reserve_in_cents?: number;
+          month: string;
+          notes?: string | null;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          minimum_free_reserve_in_cents?: number;
+          month?: string;
+          notes?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       transactions: {
         Row: {
           account_id: string | null;
@@ -228,6 +306,15 @@ export type Database = {
           month_offset?: number;
         };
         Returns: string;
+      };
+      upsert_monthly_plan: {
+        Args: {
+          p_items: Json;
+          p_minimum_free_reserve_in_cents: number;
+          p_month: string;
+          p_notes: string | null;
+        };
+        Returns: Json;
       };
     };
     Enums: {
