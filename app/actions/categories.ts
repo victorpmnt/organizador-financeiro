@@ -10,6 +10,7 @@ import {
   actionValidationFailure,
   type ActionResult,
 } from "./action-result";
+import { revalidateCategoryViews } from "./revalidation";
 
 export async function createCategoryAction(input: unknown): Promise<ActionResult<Category>> {
   const parsedInput = createCategorySchema.safeParse(input);
@@ -25,7 +26,9 @@ export async function createCategoryAction(input: unknown): Promise<ActionResult
 
   try {
     const { createCategory } = await createFinancePhaseOneUseCases();
-    return actionSuccess(await createCategory.execute(parsedInput.data));
+    const category = await createCategory.execute(parsedInput.data);
+    revalidateCategoryViews();
+    return actionSuccess(category);
   } catch (error) {
     return actionFailure(error);
   }
@@ -39,4 +42,3 @@ export async function listCategoriesAction(): Promise<ActionResult<Category[]>> 
     return actionFailure(error);
   }
 }
-

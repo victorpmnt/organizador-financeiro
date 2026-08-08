@@ -10,6 +10,7 @@ import {
   actionValidationFailure,
   type ActionResult,
 } from "./action-result";
+import { revalidateAccountViews } from "./revalidation";
 
 export async function createAccountAction(input: unknown): Promise<ActionResult<Account>> {
   const parsedInput = createAccountSchema.safeParse(input);
@@ -25,7 +26,9 @@ export async function createAccountAction(input: unknown): Promise<ActionResult<
 
   try {
     const { createAccount } = await createFinancePhaseOneUseCases();
-    return actionSuccess(await createAccount.execute(parsedInput.data));
+    const account = await createAccount.execute(parsedInput.data);
+    revalidateAccountViews();
+    return actionSuccess(account);
   } catch (error) {
     return actionFailure(error);
   }
@@ -39,4 +42,3 @@ export async function listAccountsAction(): Promise<ActionResult<Account[]>> {
     return actionFailure(error);
   }
 }
-

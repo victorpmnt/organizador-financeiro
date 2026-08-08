@@ -15,6 +15,7 @@ import {
   actionValidationFailure,
   type ActionResult,
 } from "./action-result";
+import { revalidatePlanningViews } from "./revalidation";
 
 export async function upsertMonthlyPlanAction(
   input: unknown,
@@ -32,7 +33,9 @@ export async function upsertMonthlyPlanAction(
 
   try {
     const { upsertMonthlyPlan } = await createFinancePhaseFourUseCases();
-    return actionSuccess(await upsertMonthlyPlan.execute(parsedInput.data));
+    const plan = await upsertMonthlyPlan.execute(parsedInput.data);
+    revalidatePlanningViews();
+    return actionSuccess(plan);
   } catch (error) {
     return actionFailure(error);
   }

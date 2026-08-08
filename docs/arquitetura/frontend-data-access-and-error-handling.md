@@ -3,7 +3,7 @@ doc_id: DOC-ARCH-007
 title: Acesso a Dados e Tratamento de Erros no Frontend
 type: guide
 status: draft
-version: 1.0.0
+version: 1.1.0
 owner: TBD
 created_at: 2026-08-08
 updated_at: 2026-08-08
@@ -32,7 +32,7 @@ related_docs:
 
 Definir um contrato simples para que paginas, Server Components e Client Components consumam o backend sem duplicar autenticacao, validacao, tratamento de erro ou montagem de dados financeiros.
 
-Este documento prepara a implementacao do frontend. Ele nao cria loaders ou componentes neste momento.
+Este documento registra o contrato implementado para loaders e revalidacao. A entrega nao cria componentes visuais.
 
 ## Principios
 
@@ -56,17 +56,37 @@ Responsabilidades:
 3. devolver um view model serializavel;
 4. preservar o contrato de erro conhecido.
 
-Exemplos futuros:
+Loaders disponiveis em `app/_loaders/finance.ts`:
 
 ```ts
 loadMonthlyDashboard(yearMonth)
 loadMonthlyPlan(yearMonth)
 loadPlannedVsActual(yearMonth)
+loadTransactionsByMonth(yearMonth)
+loadOpenCommitments()
+loadAccounts()
+loadCategories()
 ```
 
 O loader nao deve calcular saldo, comprometido ou disponivel. Ele apenas coordena a leitura e entrega o resultado ao componente.
 
 Para leituras, a preferencia arquitetural e chamar o caso de uso diretamente pela composicao server-side. Server Actions de leitura existentes podem ser mantidas por compatibilidade, mas nao devem virar uma API HTTP interna nem ser duplicadas em cada pagina.
+
+Os parametros mensais sao validados antes da composicao. `yearMonth` aceita apenas uma competencia valida em `YYYY-MM`, com mes entre `01` e `12`. Identidade nao faz parte da assinatura publica dos loaders: cada caso de uso exige o usuario a partir da sessao validada no servidor.
+
+Exemplo de consumo em uma pagina futura:
+
+```tsx
+const result = await loadMonthlyDashboard(searchParams.month)
+
+if (!result.ok) {
+  return <DashboardError error={result.error} />
+}
+
+return <Dashboard data={result.data} />
+```
+
+O DTO de sucesso permanece serializavel e conserva valores numericos, identificadores e codigos de dominio. Presenters podem formatar moeda e labels na borda sem substituir os dados originais necessarios pela tela.
 
 ### Mutacoes: Server Actions
 
@@ -92,7 +112,7 @@ type ActionResult<T> =
       error: {
         code: string
         message: string
-        issues?: Record<string, string[]>
+        issues?: Array<{ path: string; message: string }>
       }
     }
 ```
@@ -122,6 +142,8 @@ Todo bloco que dependa de leitura deve prever:
 - `unavailable`: dado temporariamente indisponivel, sem inventar valor zero.
 
 Valor indisponivel nao deve ser apresentado como `R$ 0,00`, pois isso altera a interpretacao financeira.
+
+O loader entrega `success`, `unauthenticated`, `validation`, `conflict` ou `internal error` por `ActionResult`. `loading` pertence ao `loading.tsx` ou `Suspense` da rota; `empty` e identificado por colecoes vazias ou DTOs sem registro; `unavailable` e representado por falha explicita, nunca pela fabricacao de um DTO com zeros.
 
 ## Fluxo recomendado
 
@@ -167,6 +189,19 @@ Exemplos:
 - pagamento de compromisso: atualizar compromisso, saldo da conta pagadora e disponivel;
 - salvar plano: atualizar planejamento e comparativo planejado versus realizado.
 
+Mapeamento implementado em `app/actions/revalidation.ts`:
+
+| Mutacao confirmada | Rotas revalidadas |
+| --- | --- |
+| criar conta | `/contas`, `/dashboard` |
+| criar categoria | `/categorias`, `/planejamento`, `/transacoes` |
+| criar entrada ou despesa imediata | `/dashboard`, `/transacoes` |
+| compra no credito | `/compromissos`, `/dashboard`, `/transacoes` |
+| pagamento de compromisso | `/contas`, `/compromissos`, `/dashboard` |
+| salvar planejamento | `/dashboard`, `/planejamento` |
+
+A revalidacao ocorre apenas depois de o caso de uso concluir. Erros de validacao, autenticacao, conflito ou persistencia nao invalidam as leituras atuais.
+
 ## View models e presenters
 
 Casos de uso retornam DTOs de aplicacao. A camada `interface` pode convertê-los em view models próprios da tela, por exemplo para:
@@ -180,18 +215,17 @@ Essa adaptação nao deve alterar valores nem regras do dominio. Formatação de
 
 ## Decisoes adiadas
 
-- Implementar os loaders quando o primeiro dashboard real for conectado.
 - Definir se cada tela usara um loader por bloco ou um loader agregado por página após medir a necessidade de atualização independente.
 - Avaliar cache e revalidacao mais granular quando houver telas interativas suficientes para justificar a complexidade.
 - Adicionar observabilidade estruturada para `INTERNAL_ERROR` antes do deploy publico.
 
 ## Checklist para a implementação do frontend
 
-- [ ] Server Component usa loader ou composicao server-side para leituras.
+- [x] Loaders server-only chamam a composicao server-side para leituras.
 - [ ] Client Component nao acessa Supabase nem repositorio.
 - [ ] Mutacao usa Server Action e `ActionResult`.
 - [ ] Campos invalidos exibem `issues` sem perder os valores digitados.
 - [ ] Erros de sessao, validacao, conflito e falha inesperada possuem tratamento distinto.
 - [ ] Loading, vazio, sucesso e erro existem para cada bloco financeiro.
-- [ ] Nenhuma falha de leitura e convertida silenciosamente em saldo zero.
-- [ ] Apos mutacao, todas as leituras derivadas afetadas sao revalidadas.
+- [x] Nenhuma falha de leitura e convertida silenciosamente em saldo zero pelos loaders.
+- [x] Apos mutacao confirmada, as rotas com leituras derivadas afetadas sao revalidadas.

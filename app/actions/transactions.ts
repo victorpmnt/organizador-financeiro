@@ -13,6 +13,7 @@ import {
   actionValidationFailure,
   type ActionResult,
 } from "./action-result";
+import { revalidateTransactionViews } from "./revalidation";
 
 export async function createIncomeEntryAction(
   input: unknown,
@@ -30,7 +31,9 @@ export async function createIncomeEntryAction(
 
   try {
     const { createIncomeEntry } = await createFinancePhaseTwoUseCases();
-    return actionSuccess(await createIncomeEntry.execute(parsedInput.data));
+    const transaction = await createIncomeEntry.execute(parsedInput.data);
+    revalidateTransactionViews();
+    return actionSuccess(transaction);
   } catch (error) {
     return actionFailure(error);
   }
@@ -52,7 +55,9 @@ export async function createImmediateExpenseAction(
 
   try {
     const { createImmediateExpense } = await createFinancePhaseTwoUseCases();
-    return actionSuccess(await createImmediateExpense.execute(parsedInput.data));
+    const transaction = await createImmediateExpense.execute(parsedInput.data);
+    revalidateTransactionViews();
+    return actionSuccess(transaction);
   } catch (error) {
     return actionFailure(error);
   }

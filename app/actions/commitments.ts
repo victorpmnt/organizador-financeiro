@@ -14,6 +14,10 @@ import {
   actionValidationFailure,
   type ActionResult,
 } from "./action-result";
+import {
+  revalidateCommitmentPaymentViews,
+  revalidateCreditPurchaseViews,
+} from "./revalidation";
 
 export async function createCreditCardPurchaseAction(
   input: unknown,
@@ -31,7 +35,9 @@ export async function createCreditCardPurchaseAction(
 
   try {
     const { createCreditCardPurchase } = await createFinancePhaseThreeUseCases();
-    return actionSuccess(await createCreditCardPurchase.execute(parsedInput.data));
+    const result = await createCreditCardPurchase.execute(parsedInput.data);
+    revalidateCreditPurchaseViews();
+    return actionSuccess(result);
   } catch (error) {
     return actionFailure(error);
   }
@@ -62,7 +68,9 @@ export async function payCommitmentAction(
 
   try {
     const { payCommitment } = await createFinancePhaseThreeUseCases();
-    return actionSuccess(await payCommitment.execute(parsedInput.data));
+    const result = await payCommitment.execute(parsedInput.data);
+    revalidateCommitmentPaymentViews();
+    return actionSuccess(result);
   } catch (error) {
     return actionFailure(error);
   }
