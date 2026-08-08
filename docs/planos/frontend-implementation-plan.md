@@ -1,16 +1,16 @@
 ---
 doc_id: DOC-PLAN-003
-title: Plano de Implementação do Frontend
+title: Plano de Implementacao do Frontend
 type: plan
 status: draft
-version: 1.1.0
+version: 1.3.0
 owner: TBD
 created_at: 2026-08-07
 updated_at: 2026-08-08
 review_due:
 domain: frontend
 audited_by: TBD
-summary: Plano técnico para implementar o frontend do MVP com tokens, CSS nativo, Tailwind, componentes reutilizáveis e progressive enhancement dos efeitos de vidro e metal.
+summary: Plano tecnico para implementar o frontend do MVP com tokens, CSS nativo, Tailwind, componentes reutilizaveis e progressive enhancement dos efeitos de vidro e metal.
 rag_ready: false
 tags:
   - frontend
@@ -26,28 +26,28 @@ related_docs:
   - "[[docs/arquitetura/frontend-data-access-and-error-handling]]"
 ---
 
-# Plano de Implementação do Frontend
+# Plano de Implementacao do Frontend
 
-## Decisão técnica
+## Decisao tecnica
 
-Implementar a linguagem visual diretamente com CSS moderno, tokens próprios e componentes React locais. Usar bibliotecas públicas para problemas que já possuem solução madura, não para terceirizar a identidade visual.
+Implementar a linguagem visual diretamente com CSS moderno, tokens proprios e componentes React locais. Usar bibliotecas publicas para problemas que ja possuem solucao madura, nao para terceirizar a identidade visual.
 
 ### Escolhas
 
-| Necessidade | Decisão |
+| Necessidade | Decisao |
 | --- | --- |
-| layout e responsividade | Tailwind CSS 4, já presente no projeto |
+| layout e responsividade | Tailwind CSS 4, ja presente no projeto |
 | tokens e materiais | custom properties CSS em `app/globals.css` ou arquivo de estilos dedicado |
 | componentes visuais | React/TypeScript locais em `src/components/ui` |
-| ícones | `lucide-react`, já instalado |
-| gráficos | Recharts, já instalado |
-| formulários | React Hook Form + Zod, já instalados |
-| animações | CSS transitions primeiro; biblioteca somente se houver necessidade comprovada |
+| icones | `lucide-react`, ja instalado |
+| graficos | Recharts, ja instalado |
+| formularios | React Hook Form + Zod, ja instalados |
+| animacoes | CSS transitions primeiro; biblioteca somente se houver necessidade comprovada |
 | glass/lensing | `backdrop-filter` e camadas CSS com fallback opaco |
-| textura metálica | CSS, gradientes e ruído pequeno reutilizável; sem Canvas/WebGL no MVP |
-| primitives acessíveis | shadcn/ui pode ser adotado seletivamente, sem importar seu tema como identidade final |
+| textura metalica | CSS, gradientes e ruido pequeno reutilizavel; sem Canvas/WebGL no MVP |
+| primitives acessiveis | shadcn/ui pode ser adotado seletivamente, sem importar seu tema como identidade final |
 
-Não adicionar uma biblioteca específica de “glassmorphism” ou “Liquid Glass” no MVP. Esses pacotes tendem a limitar o acabamento, dificultar acessibilidade e criar dependência de efeitos que conseguimos controlar com poucas regras CSS.
+Nao adicionar uma biblioteca especifica de glassmorphism ou Liquid Glass no MVP. Esses pacotes tendem a limitar o acabamento, dificultar acessibilidade e criar dependencia de efeitos que conseguimos controlar com poucas regras CSS.
 
 ## Estrutura proposta
 
@@ -87,7 +87,7 @@ src/
     presenters/
 ```
 
-Componentes visuais não devem importar casos de uso de domínio. Páginas e composição fazem a ponte entre view models e componentes.
+Componentes visuais nao devem importar casos de uso de dominio. Paginas e composicao fazem a ponte entre view models e componentes.
 
 ## Tokens
 
@@ -119,157 +119,144 @@ Centralizar os tokens em CSS custom properties para permitir tema claro futuro e
 }
 ```
 
-Os nomes usados em JSX devem ser semânticos (`surface`, `positive`, `negative`) e não dependentes de uma cor física. Isso mantém a implementação alinhada ao manual visual.
+Os nomes usados em JSX devem ser semanticos (`surface`, `positive`, `negative`) e nao dependentes de uma cor fisica. Isso mantem a implementacao alinhada ao manual visual.
 
 ## Primitivos
 
 ### `GlassSurface`
 
-Responsabilidade: criar uma superfície funcional flutuante.
+Responsabilidade: criar uma superficie funcional flutuante.
 
-Implementação inicial:
+Implementacao inicial:
 
 - `background: var(--glass-fill)`
 - `border: 1px solid var(--glass-border)`
 - `backdrop-filter: blur(var(--glass-blur)) saturate(135%)`
 - sombra curta
-- fallback opaco por padrão quando `backdrop-filter` não existir
-- variante `reduced-transparency` sem transparência
+- fallback opaco por padrao quando `backdrop-filter` nao existir
+- variante `reduced-transparency` sem transparencia
 
-Usar em navegação e controles. Não usar automaticamente como wrapper de todo card.
+Usar em navegacao e controles. Nao usar automaticamente como wrapper de todo card.
 
 ### `MetalSurface`
 
-Responsabilidade: representar valor ou patrimônio.
+Responsabilidade: representar valor ou patrimonio.
 
-Implementação inicial:
+Implementacao inicial:
 
 - fundo opaco com gradiente de prata de baixa amplitude
-- pseudo-elemento de highlight estático
+- pseudo-elemento de highlight estatico
 - borda especular com baixa opacidade
 - sombra interna suave
-- textura opcional pequena e estática
+- textura opcional pequena e estatica
 
-O componente deve aceitar conteúdo normal sem forçar texto com gradiente.
+O componente deve aceitar conteudo normal sem forcar texto com gradiente.
 
 ### `ContentSurface`
 
-Responsabilidade: leitura estável de dados.
+Responsabilidade: leitura estavel de dados.
 
-Implementação inicial:
+Implementacao inicial:
 
 - fundo `surface` ou `surface-strong`
 - borda discreta
-- sem blur obrigatório
-- separação por espaçamento e hierarquia tipográfica
+- sem blur obrigatorio
+- separacao por espacamento e hierarquia tipografica
 
 ## Regras de CSS
 
-- não animar `backdrop-filter`
-- não aplicar blur em cada item de uma lista
+- nao animar `backdrop-filter`
+- nao aplicar blur em cada item de uma lista
 - evitar filtros em elementos grandes que cobrem a viewport
 - preferir pseudo-elementos para highlight e textura
 - respeitar `prefers-reduced-motion`
 - usar `@supports (backdrop-filter: blur(1px))` para progressive enhancement
-- manter uma versão opaca para `prefers-reduced-transparency` e alto contraste
+- manter uma versao opaca para `prefers-reduced-transparency` e alto contraste
 
-Exemplo de fallback:
+## Integracao com o Next.js
 
-```css
-.glass-surface {
-  background: var(--surface-strong);
-}
-
-@supports (backdrop-filter: blur(1px)) {
-  .glass-surface {
-    background: var(--glass-fill);
-    backdrop-filter: blur(var(--glass-blur)) saturate(135%);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
-  }
-}
-```
-
-## Integração com o Next.js
-
-- manter `AppShell` como composição de layout
+- manter `AppShell` como composicao de layout
 - usar Server Components para dashboard e listas
-- usar Client Components apenas para controles, formulários, gráficos e efeitos de interação
+- usar Client Components apenas para controles, formularios, graficos e efeitos de interacao
 - passar view models prontos aos componentes
-- não calcular saldo, disponível ou comprometido dentro de componentes visuais
-- preservar a separação de domínio definida no projeto
+- nao calcular saldo, disponivel ou comprometido dentro de componentes visuais
+- preservar a separacao de dominio definida no projeto
 
-## Ordem de implementação
+## Ordem de implementacao
 
-### Fase 1 — tokens e laboratório
+### Fase 1 - tokens e laboratorio
 
-Criar tokens, superfícies e uma rota/página interna de laboratório com exemplos de estados. Validar desktop, mobile, blur ativado, blur desativado e alto contraste.
+Criar tokens, superficies e uma rota interna de laboratorio com exemplos de estados. Validar desktop, mobile, blur ativado, blur desativado e alto contraste.
 
-### Fase 2 — shell
+### Fase 2 - shell
 
-Implementar `AppShell`, navegação, dock, cabeçalho, `MonthControl`, foco, estados de sessão e estrutura responsiva.
+Implementar `AppShell`, navegacao, dock, cabecalho, `MonthControl`, foco, estados de sessao e estrutura responsiva.
 
-### Fase 3 — dashboard vertical slice
+Status em 2026-08-08:
 
-Implementar `BalanceCard`, `BucketCard`, `CommitmentCard`, `MetricTile`, `ChartPanel` e transações recentes usando o view model financeiro existente.
+- `app/globals.css` consolidado com tokens `Platinum Night`, superficies de vidro, metal e conteudo solido
+- `src/components/layout/app-shell.tsx` entregue com navegacao lateral responsiva e cabecalho alinhado ao manual visual
 
-O objetivo é validar o sistema em uma tela real antes de produzir dezenas de componentes.
+### Fase 3 - dashboard vertical slice
 
-### Fase 4 — movimentações
+Implementar `BalanceCard`, `BucketCard`, `CommitmentCard`, `MetricTile`, `ChartPanel` e transacoes recentes usando o view model financeiro existente.
 
-Implementar lista, filtros, entrada, saída imediata, estados de formulário e retornos das Server Actions. Usar `FormSheet` no mobile e painel contextual no desktop.
+Status em 2026-08-08:
 
-### Fase 5 — planejamento, carteira e crédito
+- `app/(dashboard)/dashboard/page.tsx` criado como Server Component com seletor de competencia, `loading.tsx` e tratamento de `VALIDATION_ERROR`, `UNAUTHENTICATED` e falha interna
+- `loadMonthlyDashboard` conectado ao slice inicial de saldo livre, buckets, compromissos, insights e cartoes
+- `src/components/finance/monthly-dashboard-overview.tsx` centraliza a leitura visual sem mover regra financeira para React
+- refinamento visual aplicado com dock inferior no mobile, navegacao lateral compacta no desktop e hierarquia de leitura aderente ao manual
+- `liquid glass` restrito a navegacao e controle de competencia, com fallback opaco, foco visivel e transparencia reduzida
+- textura de prata implementada em CSS no saldo heroico com gradientes curtos, borda especular e ruido monocromatico sutil, sem dependencia visual externa
+- graficos e transacoes recentes ainda nao foram conectados; permanecem como expansao desta fase
 
-Adicionar planejamento mensal, contas, benefícios, cartões, compromissos, investimentos e categorias secundárias conforme os contratos do domínio forem expostos pela aplicação.
+### Fase 4 - movimentacoes
 
-### Fase 6 — autenticação e hardening
+Implementar lista, filtros, entrada, saida imediata, estados de formulario e retornos das Server Actions. Usar `FormSheet` no mobile e painel contextual no desktop.
 
-Finalizar login, proteção de rotas, skeletons, erros, modo de privacidade, acessibilidade, performance e testes de viewport.
+### Fase 5 - planejamento, carteira e credito
 
-## Critérios de aceite técnicos
+Adicionar planejamento mensal, contas, beneficios, cartoes, compromissos, investimentos e categorias secundarias conforme os contratos do dominio forem expostos pela aplicacao.
 
-- todos os componentes principais têm estados de loading, vazio, erro, disabled e foco
+### Fase 6 - autenticacao e hardening
+
+Finalizar login, protecao de rotas, skeletons, erros, modo de privacidade, acessibilidade, performance e testes de viewport.
+
+## Criterios de aceite tecnicos
+
+- todos os componentes principais tem estados de loading, vazio, erro, disabled e foco
 - nenhuma regra financeira reside em componente React
-- layout utilizável em viewport mobile e desktop
+- layout utilizavel em viewport mobile e desktop
 - funciona sem `backdrop-filter`
-- funciona com movimento e transparência reduzidos
-- gráficos possuem valor textual e legenda
+- funciona com movimento e transparencia reduzidos
+- graficos possuem valor textual e legenda
 - `npm run lint`, `npm test` e `npm run build` passam ao final de cada fase relevante
-- a quantidade de camadas de blur e o custo visual são verificados antes de expandir o uso do material
+- a quantidade de camadas de blur e o custo visual sao verificados antes de expandir o uso do material
 
-## Estratégia de bibliotecas
+## Estrategia de bibliotecas
 
-Bibliotecas existentes devem ser aproveitadas: Tailwind, Lucide, Recharts, React Hook Form, Zod e date-fns. Adoção de shadcn/ui é opcional e limitada a primitives acessíveis, como dialog, sheet, dropdown e tabs.
+Bibliotecas existentes devem ser aproveitadas: Tailwind, Lucide, Recharts, React Hook Form, Zod e date-fns. Adocao de shadcn/ui e opcional e limitada a primitives acessiveis, como dialog, sheet, dropdown e tabs.
 
-Não usar uma biblioteca visual pronta como base da identidade. Componentes prontos podem fornecer comportamento, mas o acabamento, tokens, materiais e estados pertencem ao design system do projeto.
+Nao usar uma biblioteca visual pronta como base da identidade. Componentes prontos podem fornecer comportamento, mas o acabamento, tokens, materiais e estados pertencem ao design system do projeto.
 
-## Riscos e contenções
+## Riscos e contencoes
 
-| Risco | Contenção |
+| Risco | Contencao |
 | --- | --- |
-| glass ilegível sobre dados | vidro apenas em controles; conteúdo opaco |
-| baixo desempenho | blur restrito, sem animação de filtros, fallback sólido |
-| aparência genérica | tokens e componentes próprios, sem tema pronto |
-| excesso de abstração | iniciar com poucos primitivos e extrair após repetição real |
-| design desconectado do domínio | validar dashboard com `livre`, `VR`, `VT`, `disponível` e `comprometido` |
-| acessibilidade tratada tarde | testar reduced transparency, motion, keyboard e contraste no laboratório |
+| glass ilegivel sobre dados | vidro apenas em controles; conteudo opaco |
+| baixo desempenho | blur restrito, sem animacao de filtros, fallback solido |
+| aparencia generica | tokens e componentes proprios, sem tema pronto |
+| excesso de abstracao | iniciar com poucos primitivos e extrair apos repeticao real |
+| design desconectado do dominio | validar dashboard com `livre`, `VR`, `VT`, `disponivel` e `comprometido` |
+| acessibilidade tratada tarde | testar reduced transparency, motion, keyboard e contraste no laboratorio |
 
-## Primeira entrega técnica
+## Primeira entrega tecnica
 
-A primeira entrega deve ser um laboratório visual interno e uma versão estática do dashboard. Não começar pela aplicação completa nem por uma biblioteca genérica de componentes.
-
-O laboratório precisa demonstrar:
+A primeira entrega deixou de ser apenas uma recomendacao estatica e passou a ser um slice funcional do dashboard mensal. O baseline atual precisa demonstrar e preservar:
 
 - `GlassSurface`
 - `MetalSurface`
 - `ContentSurface`
-- `BalanceCard`
-- `BucketCard`
-- `MonthControl`
+- leitura de `saldo livre`, `VR`, `VT`, `comprometido` e `limite seguro`
 - estados de foco, erro, loading e modo opaco
