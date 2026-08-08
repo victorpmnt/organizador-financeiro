@@ -3,10 +3,10 @@ doc_id: DOC-ARCH-005
 title: Arquitetura Serverless com Vercel e Supabase
 type: architecture
 status: draft
-version: 1.0.0
+version: 1.1.0
 owner: TBD
 created_at: 2026-08-06
-updated_at: 2026-08-06
+updated_at: 2026-08-08
 review_due:
 domain: arquitetura
 audited_by: TBD
@@ -23,6 +23,7 @@ related_docs:
   - "[[docs/planos/backend-mvp-plan]]"
   - "[[docs/arquitetura/initial-database-schema]]"
   - "[[docs/regras_de_negocio/politica-de-exposicao-data-api-e-grants]]"
+  - "[[docs/arquitetura/frontend-data-access-and-error-handling]]"
 ---
 
 # Arquitetura Serverless com Vercel e Supabase

@@ -3,10 +3,10 @@ doc_id: DOC-PLAN-003
 title: Plano de Implementação do Frontend
 type: plan
 status: draft
-version: 1.0.0
+version: 1.1.0
 owner: TBD
 created_at: 2026-08-07
-updated_at: 2026-08-07
+updated_at: 2026-08-08
 review_due:
 domain: frontend
 audited_by: TBD
@@ -23,6 +23,7 @@ related_docs:
   - "[[docs/arquitetura/frontend-visual-manual]]"
   - "[[docs/planos/frontend-design-system-plan]]"
   - "[[docs/planos/backend-mvp-plan]]"
+  - "[[docs/arquitetura/frontend-data-access-and-error-handling]]"
 ---
 
 # Plano de Implementação do Frontend
