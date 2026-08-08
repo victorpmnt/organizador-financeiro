@@ -3,7 +3,7 @@ doc_id: DOC-PLAN-001
 title: Plano Tecnico de Implementacao do Backend do MVP
 type: plan
 status: draft
-version: 1.4.0
+version: 1.5.0
 owner: TBD
 created_at: 2026-08-05
 updated_at: 2026-08-07
@@ -838,7 +838,12 @@ Decisoes de negocio confirmadas para a fase de credito:
 - compromissos em aberto sao listados por vencimento crescente
 - `investment` permanece fora do MVP e no roadmap
 
-Pontos tecnicos ainda necessarios antes da implementacao:
+Ponto tecnico ainda necessario antes da implementacao:
 
-- definir o modelo fisico das parcelas (linhas filhas ou compromissos por parcela)
 - confirmar se `fixed_bill` entra nesta fase ou fica para depois
+
+Decisao tecnica aprovada para parcelas:
+
+- cada parcela sera persistida como uma linha de `commitment`
+- todas as parcelas serao relacionadas ao mesmo grupo da compra original
+- a compra continua sendo um compromisso logico unico no dominio

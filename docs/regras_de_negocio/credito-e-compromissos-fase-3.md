@@ -3,7 +3,7 @@ doc_id: DOC-RN-003
 title: Credito, Parcelas e Compromissos da Fase 3
 type: guide
 status: draft
-version: 1.0.0
+version: 1.1.0
 owner: TBD
 created_at: 2026-08-07
 updated_at: 2026-08-07
@@ -80,7 +80,22 @@ Regra de contabilização:
 - o pagamento de uma parcela liquida somente aquela parcela
 - o pagamento não cria um novo consumo
 
-O modelo físico (uma linha com parcelas filhas ou linhas de compromisso por parcela) será definido na implementação, mas deve preservar essa regra lógica.
+### Persistência aprovada para o MVP
+
+Foi aprovada a persistência de uma linha de `commitment` para cada parcela, todas relacionadas ao mesmo grupo da compra original.
+
+Cada registro de parcela deve manter, no mínimo:
+
+- identificador da compra ou compromisso lógico de origem
+- número da parcela
+- quantidade total de parcelas
+- valor da parcela
+- vencimento
+- status de liquidação
+
+Essa decisão não altera a regra de negócio: uma compra continua gerando um único compromisso lógico. A multiplicação ocorre apenas na persistência para permitir que cada parcela seja consultada, comprometida e liquidada no mês correto.
+
+O consumo da compra original continua sendo registrado uma única vez. As linhas de parcela representam somente o comprometimento futuro e não novas despesas de consumo.
 
 ## Pagamento da fatura
 
@@ -148,4 +163,3 @@ Uma compra de R$ 100 gera um compromisso de R$ 100. O saldo confirmado não muda
 ### Compra parcelada
 
 Uma compra de R$ 600 em 3 vezes gera um compromisso lógico de R$ 600 e três parcelas de R$ 200. Cada mês considera somente a parcela que vence nele. O pagamento total de uma fatura liquida as parcelas selecionadas daquela fatura.
-
